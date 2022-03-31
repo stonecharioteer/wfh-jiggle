@@ -12,3 +12,7 @@ Cargo.lock
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+# stuff for remark to work in the local directory
+node_modules/**
+package*.json
