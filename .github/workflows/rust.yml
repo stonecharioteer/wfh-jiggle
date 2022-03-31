@@ -21,8 +21,6 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install -y libxdo-dev
     - name: Check Syntax
-      run: cargo check --verbose
+      run: cargo check --quiet
     - name: Run tests
-      run: cargo test --verbose
-    - name: Build
-      run: cargo build --verbose --release
+      run: cargo test

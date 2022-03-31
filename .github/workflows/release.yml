@@ -10,22 +10,12 @@ env:
 name: Build and Release
 
 jobs:
-  build-and-release:
-    name: Upload Release Asset
-    runs-on: ${{matrix.os}}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url}}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: install libxdo-dev for ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install -y libxdo-dev
-      - name: Cargo Check
-        run: cargo check --verbose
-      - name: Build
-        run: cargo build --verbose --release
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -36,14 +26,56 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Upload Release Asset
-        if: matrix.os == 'ubuntu-latest'
-        id: upload-release-asset 
+  upload_release:
+    name: Upload Release Asset
+    needs: create_release
+    runs-on: ${{matrix.config.os}}
+    strategy:
+      matrix:
+        config:
+          - os: ubuntu-latest
+          - os: windows-latest
+          - os: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: install libxdo-dev for ubuntu
+        if: matrix.config.os == 'ubuntu-latest'
+        run: sudo apt-get install -y libxdo-dev
+      - name: Cargo Check
+        run: cargo check --quiet
+      - name: Build
+        run: cargo build --release --quiet
+      - name: Upload Release Asset Windows
+        id: upload-release-asset-windows 
+        if: matrix.config.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./target/release/jiggle.exe
+          asset_name: jiggle-win64.exe
+          asset_content_type: application/octet-stream
+      - name: Upload Release Asset Ubuntu
+        id: upload-release-asset-ubuntu
+        if: matrix.config.os == 'ubuntu-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_path: ./target/release/jiggle
-          asset_name: jiggle-${{matrix.os}}
+          asset_name: jiggle-linux64
+          asset_content_type: application/octet-stream
+      - name: Upload Release Asset MacOS
+        id: upload-release-asset-macos
+        if: matrix.config.os == 'macos-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./target/release/jiggle
+          asset_name: jiggle-macos
           asset_content_type: application/octet-stream
