@@ -24,21 +24,12 @@ fn main() {
     env_logger::init();
     debug!("Jiggle started.");
     let mouse_controller = Mouse::new();
-    let sleep_duration = match opt.seconds {
-        Some(v) => v,
-        None => {
-            let sleep_duration_result = env::var("JIGGLE_SLEEP");
-            let default_sleep = 10; // 10 seconds
-            let val: u64 = match sleep_duration_result {
-                Ok(v) => match v.to_string().parse::<u64>() {
-                    Ok(x) => x,
-                    Err(_) => default_sleep,
-                },
-                Err(_) => default_sleep,
-            };
-            val
-        }
-    };
+    let sleep_duration = opt.seconds.unwrap_or_else(|| {
+        env::var("JIGGLE_SLEEP")
+            .ok()
+            .and_then(|var| var.parse().ok())
+            .unwrap_or(10) // 10 seconds...
+    });
     debug!("Sleep duration is set to {sleep_duration}s.");
     loop {
         let old_position = mouse_controller.get_position().unwrap();
