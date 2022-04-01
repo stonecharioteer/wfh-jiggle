@@ -47,6 +47,6 @@ fn main() {
         mouse_controller.move_to(new_position.x, new_position.y).unwrap();
         mouse_controller.move_to(old_position.x, old_position.y).unwrap();
         debug!("Sleeping for {sleep_duration}s.");
-        thread::sleep(Duration::new(sleep_duration, 0));
+        thread::sleep(Duration::from_secs(sleep_duration));
     }
 }
