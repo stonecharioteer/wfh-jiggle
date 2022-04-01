@@ -1,5 +1,5 @@
 use log::debug;
-use std::{env, thread, time::Duration};
+use std::{env, num::NonZeroU64, thread, time::Duration};
 use structopt::StructOpt;
 
 use mouse_rs::{types::Point, Mouse};
@@ -15,7 +15,7 @@ struct Opt {
     /// Seconds to wait before moving your mouse.
     /// default: 10s, can also be set by using the `JIGGLE_SLEEP`
     /// environment variable.
-    seconds: Option<u64>,
+    seconds: Option<NonZeroU64>,
 }
 
 fn main() {
@@ -23,22 +23,19 @@ fn main() {
     let opt = Opt::from_args();
     env_logger::init();
     debug!("Jiggle started.");
+
     let mouse_controller = Mouse::new();
-    let sleep_duration = match opt.seconds {
-        Some(v) => v,
-        None => {
-            let sleep_duration_result = env::var("JIGGLE_SLEEP");
-            let default_sleep = 10; // 10 seconds
-            let val: u64 = match sleep_duration_result {
-                Ok(v) => match v.to_string().parse::<u64>() {
-                    Ok(x) => x,
-                    Err(_) => default_sleep,
-                },
-                Err(_) => default_sleep,
-            };
-            val
-        }
-    };
+    let sleep_duration = opt
+        .seconds
+        .or_else(|| {
+            env::var("JIGGLE_SLEEP")
+                .ok()
+                .and_then(|var| var.parse().ok())
+                .and_then(NonZeroU64::new)
+        })
+        .map(NonZeroU64::get)
+        .unwrap_or(10);
+
     debug!("Sleep duration is set to {sleep_duration}s.");
     loop {
         let old_position = mouse_controller.get_position().unwrap();
@@ -47,9 +44,9 @@ fn main() {
             y: old_position.y + 1,
         };
         debug!("Moving the mouse a tiny bit.");
-        _ = mouse_controller.move_to(new_position.x, new_position.y);
-        _ = mouse_controller.move_to(old_position.x, old_position.y);
+        mouse_controller.move_to(new_position.x, new_position.y).unwrap();
+        mouse_controller.move_to(old_position.x, old_position.y).unwrap();
         debug!("Sleeping for {sleep_duration}s.");
-        thread::sleep(Duration::new(sleep_duration, 0));
+        thread::sleep(Duration::from_secs(sleep_duration));
     }
 }
