@@ -44,8 +44,8 @@ fn main() {
             y: old_position.y + 1,
         };
         debug!("Moving the mouse a tiny bit.");
-        _ = mouse_controller.move_to(new_position.x, new_position.y);
-        _ = mouse_controller.move_to(old_position.x, old_position.y);
+        mouse_controller.move_to(new_position.x, new_position.y).unwrap();
+        mouse_controller.move_to(old_position.x, old_position.y).unwrap();
         debug!("Sleeping for {sleep_duration}s.");
         thread::sleep(Duration::new(sleep_duration, 0));
     }
