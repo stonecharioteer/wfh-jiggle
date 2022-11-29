@@ -2,11 +2,14 @@
 name = "jiggle"
 version = "0.1.0"
 edition = "2021"
+description = "jiggle - A Tiny Program to Jiggle Your Mouse"
+license = "GPL-3.0-only"
+repository = "https://github.com/stonecharioteer/wfh-jiggle"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-mouse-rs = { git = "https://github.com/AltF02/mouse-rs", branch = "main"}
+mouse-rs = "0.4.2"
 log = "0.4.16"
 env_logger = "0.9.0"
 structopt = "0.3.26"
