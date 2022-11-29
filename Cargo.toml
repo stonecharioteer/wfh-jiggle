@@ -2,6 +2,9 @@
 name = "jiggle"
 version = "0.1.0"
 edition = "2021"
+description = "jiggle - A Tiny Program to Jiggle Your Mouse"
+license = "GPL-3.0-only"
+repository = "https://github.com/stonecharioteer/wfh-jiggle"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
