@@ -21,9 +21,14 @@ computer from sleeping.
 
 Download the binary from the releases, and run the command whenever you want.
 
-Note that you should install `libxdo-dev`, `xdotool`, or `libxdo-devel` if you're trying to build
-this using `cargo` on Linux.
+## Platform notes
 
-This should work on MacOs, Windows and Linux.
+- Windows: no extra system dependency is required.
+- Linux: install `libxdo-dev` (Debian/Ubuntu) or `libxdo-devel` (Fedora/RHEL). This tool relies on
+  X11 input simulation, so Wayland sessions may block cursor injection.
+- macOS: allow Accessibility permissions for the terminal/app running `jiggle`, otherwise macOS
+  will reject synthetic mouse movement.
+
+This project is tested in CI on Windows, Linux, and macOS.
 
 Raise issues [here](https://github.com/stonecharioteer/wfh-jiggle).
