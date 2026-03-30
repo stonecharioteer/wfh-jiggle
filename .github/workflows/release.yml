@@ -46,6 +46,10 @@ jobs:
         run: cargo check --quiet
       - name: Build
         run: cargo build --release --quiet
+      - name: Smoke test CLI help
+        run: cargo run --release --quiet -- --help
+      - name: Run tests
+        run: cargo test --quiet
       - name: Upload Release Asset Windows
         id: upload-release-asset-windows 
         if: matrix.config.os == 'windows-latest'
