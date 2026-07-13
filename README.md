@@ -11,11 +11,23 @@ want to somehow keep your system unlocked for some reason.
 
 ## Usage
 
-Run `jiggle` to run this command every 10 seconds. If you'd like to adjust the time setting, you
-can use `jiggle <SECONDS>`, such as `jiggle 60` to run the command every 60s.
+Run `jiggle` to start with the default 10-second interval. A green circle appears in your menu bar.
 
-What Jiggle does is it moves your mouse a *tiny* bit every few seconds. That's enough to keep your
-computer from sleeping.
+```
+jiggle          # jiggle every 10s
+jiggle 30       # jiggle every 30s
+JIGGLE_SLEEP=60 jiggle  # via environment variable
+```
+
+What Jiggle does is it moves your mouse a *tiny* bit and immediately moves it back. That's enough
+to keep your computer from sleeping.
+
+### Tray icon
+
+Click the menu bar icon to:
+
+- **Pause / Resume** — temporarily stop jiggling (icon turns gray while paused)
+- **Quit Jiggle** — exit the app
 
 ## Installation
 
@@ -24,6 +36,6 @@ Download the binary from the releases, and run the command whenever you want.
 Note that you should install `libxdo-dev`, `xdotool`, or `libxdo-devel` if you're trying to build
 this using `cargo` on Linux.
 
-This should work on MacOs, Windows and Linux.
+This should work on macOS, Windows, and Linux.
 
 Raise issues [here](https://github.com/stonecharioteer/wfh-jiggle).
